@@ -1,6 +1,6 @@
-# Chatter Detection in CNC Machining
+# Chatter Detection in CNC Machining (Machine Learning Pipeline)
 
-A data science project focused on detecting and predicting chatter vibrations in CNC machining processes using machine learning techniques.
+An end-to-end Machine Learning project to detect and predict chatter vibrations in CNC turning processes. This project focuses on signal processing, feature engineering from high-frequency dynamometer data, comparative model evaluation, and hyperparameter optimization to achieve high predictive accuracy.
 
 ## Project Structure
 
@@ -8,27 +8,58 @@ A data science project focused on detecting and predicting chatter vibrations in
 Chatter Detection in CNC Machining/
 │
 ├── data/
-│   ├── raw/              # Original, unmodified sensor/experimental data
-│   └── processed/        # Cleaned and feature-engineered datasets
+│   ├── raw/              # Original, unmodified dynamometer force signals (.csv)
+│   └── processed/        # Extracted features dataset (features.csv)
+│
+├── src/
+│   ├── config.py             # Project configuration (paths, hyperparameters)
+│   ├── data_processing.py    # Raw data loading, segmentation, and feature extraction
+│   └── build_notebooks.py    # Script to regenerate notebooks
 │
 ├── notebooks/
-│   ├── 01_data_preprocessing.ipynb       # Data loading, cleaning & EDA
-│   ├── 02_xgboost_optimization.ipynb     # XGBoost model training & tuning
-│   ├── 03_1d_cnn_pytorch.ipynb           # 1D CNN for time-series classification
-│   └── 04_stability_lobe_diagrams.ipynb  # Stability lobe diagram analysis
+│   ├── 01_EDA_and_Feature_Selection.ipynb    # Data distributions and correlation analysis
+│   ├── 02_Model_Comparison.ipynb             # Comparing RF, SVM, XGBoost for Regression/Classification
+│   └── 03_Hyperparameter_Optimization.ipynb  # Optuna Bayesian Optimization on the best model
 │
 ├── requirements.txt      # Python dependencies
 └── README.md             # Project overview
 ```
 
-## Notebooks Overview
+## Methodology
 
-| Notebook | Description |
-|---|---|
-| `01_data_preprocessing` | Signal loading, noise filtering, feature extraction from vibration/acoustic data |
-| `02_xgboost_optimization` | Gradient boosting classifier with hyperparameter optimization (Optuna/GridSearch) |
-| `03_1d_cnn_pytorch` | Deep learning approach using 1D Convolutional Neural Networks on raw time-series |
-| `04_stability_lobe_diagrams` | Analytical generation and visualization of stability lobe diagrams (SLD) |
+### 1. Data Processing & Feature Engineering
+Raw force signals (Fx, Fy, Fz) are sliced into stable cutting zones. For each zone, 13 time and frequency domain features are extracted:
+- **Statistical:** Mean, RMS, Standard Deviation, Peak-to-Peak, Kurtosis, Skewness.
+- **Waveform:** Crest Factor, Shape Factor, Impulse Factor.
+- **Frequency (FFT/Welch PSD):** Dominant Frequency, Spectral Centroid, Spectral Bandwidth, Harmonic Energy Ratio.
+- **Target:** A continuous **Chatter Index (CI)** derived from the ratio of spindle harmonic energy to total signal energy.
+
+### 2. Model Evaluation
+The problem is framed in two ways:
+- **Classification:** Predicting a binary state (Stable vs. Chatter) using an adaptive threshold on the Chatter Index.
+- **Regression:** Predicting the continuous Chatter Index directly.
+Models evaluated: `Logistic Regression/Ridge`, `Support Vector Machines (SVM)`, `Random Forest`, and `XGBoost`.
+
+### 3. Hyperparameter Optimization
+The best-performing models (XGBoost/Gradient Boosting) are tuned using **Optuna** (Bayesian Optimization) to maximize Cross-Validation Accuracy and R2 score, proving out a robust optimization framework.
+
+## Results
+
+### Classification (Stable vs. Chatter)
+| Model | Cross-Validation Accuracy | Final Test Accuracy | Test F1-Score |
+| :--- | :---: | :---: | :---: |
+| **Logistic Regression** | 70.6% | **90.9%** | **0.947** |
+| **SVM (RBF)** | 75.0% | 81.8% | 0.900 |
+| **Random Forest** | 68.1% | 81.8% | 0.900 |
+| **XGBoost (Optuna Tuned)** | **84.4%** | 81.8% | 0.900 |
+
+### Regression (Chatter Index Prediction)
+| Model | Cross-Validation $R^2$ | Final Test $R^2$ | Test RMSE |
+| :--- | :---: | :---: | :---: |
+| **Random Forest** | -1.33 | **0.954** | **0.005** |
+| **XGBoost** | -4.22 | 0.694 | 0.013 |
+| **Ridge Regression** | -2.22 | 0.596 | 0.015 |
+| **Gradient Boosting (Optuna)** | **-0.79** | 0.462 | 0.024 |
 
 ## Getting Started
 
@@ -37,14 +68,23 @@ Chatter Detection in CNC Machining/
    pip install -r requirements.txt
    ```
 
-2. **Place raw data** in `data/raw/`
+2. **Prepare the Data:**
+   Place the raw sensor CSV files in the `data/raw/` directory.
 
-3. **Run notebooks in order**, starting with `01_data_preprocessing.ipynb`
+3. **Extract Features:**
+   Run the data processing script to extract features and generate `data/processed/features.csv`.
+   ```bash
+   python src/data_processing.py
+   ```
 
-## Key Techniques
+4. **Run the Notebooks:**
+   Launch Jupyter Notebook and run the notebooks in the `notebooks/` directory sequentially.
+   ```bash
+   jupyter notebook
+   ```
 
-- Vibration signal processing (FFT, STFT, wavelets)
-- Feature engineering from time & frequency domains
-- XGBoost classification with hyperparameter tuning
-- 1D CNN for raw time-series chatter detection
-- Stability Lobe Diagram (SLD) generation
+## Key Technologies
+- `Scikit-learn`, `XGBoost`
+- `Optuna` (Hyperparameter Tuning)
+- `Pandas`, `NumPy`, `SciPy` (Signal Processing)
+- `Matplotlib`, `Seaborn`

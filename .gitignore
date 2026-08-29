@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # Data files (Do not commit large raw datasets to GitHub!)
+data/raw.zip
 data/raw/*.csv
 !data/sample/
 !data/sample/*.csv
