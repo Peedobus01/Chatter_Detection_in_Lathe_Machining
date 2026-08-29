@@ -45,9 +45,6 @@ The best-performing models (XGBoost/Gradient Boosting) are tuned using **Optuna*
 
 ## Results
 
-> [!NOTE]
-> **A Note on Dataset Size & Model Selection:** While the raw signal data is massive (2.2GB+), the feature extraction pipeline condenses this into an ultra-dense dataset of 55 highly predictive rows. Because the final dataset is small, advanced algorithms (XGBoost/Gradient Boosting) optimized via Optuna tend to overfit the training folds. As shown below, simpler and inherently robust models (Logistic Regression, Random Forest) achieve vastly superior generalization on the hidden test set.
-
 ### 1. Baseline Classification (Stable vs. Chatter)
 | Model | Cross-Validation Accuracy | Final Test Accuracy | Test F1-Score |
 | :--- | :---: | :---: | :---: |
