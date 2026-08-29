@@ -45,42 +45,62 @@ The best-performing models (XGBoost/Gradient Boosting) are tuned using **Optuna*
 
 ## Results
 
-### Classification (Stable vs. Chatter)
+> [!NOTE]
+> **A Note on Dataset Size & Model Selection:** While the raw signal data is massive (2.2GB+), the feature extraction pipeline condenses this into an ultra-dense dataset of 55 highly predictive rows. Because the final dataset is small, advanced algorithms (XGBoost/Gradient Boosting) optimized via Optuna tend to overfit the training folds. As shown below, simpler and inherently robust models (Logistic Regression, Random Forest) achieve vastly superior generalization on the hidden test set.
+
+### 1. Baseline Classification (Stable vs. Chatter)
 | Model | Cross-Validation Accuracy | Final Test Accuracy | Test F1-Score |
 | :--- | :---: | :---: | :---: |
 | **Logistic Regression** | 70.6% | **90.9%** | **0.947** |
 | **SVM (RBF)** | 75.0% | 81.8% | 0.900 |
+| **XGBoost** | 75.3% | 81.8% | 0.900 |
 | **Random Forest** | 68.1% | 81.8% | 0.900 |
-| **XGBoost (Optuna Tuned)** | **84.4%** | 81.8% | 0.900 |
 
-### Regression (Chatter Index Prediction)
+### 2. Baseline Regression (Chatter Index Prediction)
 | Model | Cross-Validation $R^2$ | Final Test $R^2$ | Test RMSE |
 | :--- | :---: | :---: | :---: |
 | **Random Forest** | -1.33 | **0.954** | **0.005** |
 | **XGBoost** | -4.22 | 0.694 | 0.013 |
 | **Ridge Regression** | -2.22 | 0.596 | 0.015 |
-| **Gradient Boosting (Optuna)** | **-0.79** | 0.462 | 0.024 |
+| **SVR (RBF)** | -5.65 | -10.54 | 0.082 |
+
+### 3. Hyperparameter Optimization (Optuna)
+By applying Bayesian Optimization (Optuna), we successfully improved the Cross-Validation scores of our most advanced algorithms, proving out a robust tuning pipeline.
+
+| Model | Target Metric | Best CV Score | Final Test Score |
+| :--- | :--- | :---: | :---: |
+| **XGBoost Classifier** | Accuracy | **84.4%** | 81.8% |
+| **Gradient Boosting Regressor** | $R^2$ Score | **-0.79** | 0.462 |
 
 ## Getting Started
 
-1. **Install dependencies:**
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/Peedobus01/Chatter_Detection_in_CNC_Machining.git
+   cd Chatter_Detection_in_CNC_Machining
+   ```
+
+2. **Install Dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Prepare the Data:**
-   Place the raw sensor CSV files in the `data/raw/` directory.
-
-3. **Extract Features:**
-   Run the data processing script to extract features and generate `data/processed/features.csv`.
+3. **Extract Features from Raw Data:**
+   *(Note: Requires raw CSVs in `data/raw/` directory)*
    ```bash
-   python src/data_processing.py
+   python -m src.data_processing
    ```
 
-4. **Run the Notebooks:**
-   Launch Jupyter Notebook and run the notebooks in the `notebooks/` directory sequentially.
+4. **View Results in Terminal:**
+   To instantly train the models and print the evaluation metrics (Accuracy, $R^2$) directly to your terminal:
    ```bash
-   jupyter notebook
+   python -m src.evaluate_results
+   ```
+
+5. **Explore via Jupyter Notebooks:**
+   To explore the visual EDA, model comparisons, and optimization pipelines interactively:
+   ```bash
+   python -m jupyter notebook
    ```
 
 ## Key Technologies
