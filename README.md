@@ -1,6 +1,6 @@
-# Chatter Detection in CNC Machining (Machine Learning Pipeline)
+# Chatter Detection in Lathe Machining (Machine Learning Pipeline)
 
-An end-to-end Machine Learning project to detect and predict chatter vibrations in CNC turning processes. This project focuses on signal processing, feature engineering from high-frequency dynamometer data, comparative model evaluation, and hyperparameter optimization to achieve high predictive accuracy.
+An end-to-end Machine Learning project to detect and predict chatter vibrations in lathe machining processes. This project focuses on signal processing, feature engineering from high-frequency dynamometer data, comparative model evaluation, and hyperparameter optimization to achieve high predictive accuracy.
 
 ## Project Structure
 
@@ -73,8 +73,8 @@ By applying Bayesian Optimization (Optuna), we successfully improved the Cross-V
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/Peedobus01/Chatter_Detection_in_CNC_Machining.git
-   cd Chatter_Detection_in_CNC_Machining
+   git clone https://github.com/Peedobus01/Chatter_Detection_in_Lathe_Machining.git
+   cd Chatter_Detection_in_Lathe_Machining
    ```
 
 2. **Install Dependencies:**
