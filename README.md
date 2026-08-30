@@ -1,4 +1,4 @@
-# Chatter Detection in CNC Machining (Machine Learning Pipeline)
+# Chatter Detection in Lathe Machining (Machine Learning Pipeline)
 
 An end-to-end Machine Learning project to detect and predict chatter vibrations in CNC turning processes. This project focuses on signal processing, feature engineering from high-frequency dynamometer data, comparative model evaluation, and hyperparameter optimization to achieve high predictive accuracy.
 
